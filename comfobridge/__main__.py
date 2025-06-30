@@ -17,9 +17,11 @@ logger = logging.getLogger(__name__)
 
 class Config:
     def __init__(self):
-        self.comfoconnect_host = os.getenv("COMFOCONNECT_HOST")
-        self.comfoconnect_uuid = os.getenv("COMFOCONNECT_BRIDGE_UUID")
-        self.comfoconnect_local_uuid = os.getenv("COMFOCONNECT_LOCAL_UUID")
+        self.bridge_uid = os.getenv("COMFOCONNECT_BRIDGE_UUID")
+        self.bridge_host = os.getenv("COMFOCONNECT_HOST")
+        self.bridge_pin = os.getenv("COMFOCONNECT_PIN")
+        self.app_uuid = os.getenv("COMFOCONNECT_LOCAL_UUID")
+        self.app_id = os.getenv("COMFOCONNECT_LOCAL_ID")
         self.mqtt_host = os.getenv("MQTT_HOST", "localhost")
         self.mqtt_port = int(os.getenv("MQTT_PORT", "1883"))
         self.mqtt_sensor_topic = os.getenv("MQTT_SENSOR_TOPIC", "comfoconnect/sensor")
@@ -34,15 +36,13 @@ class Config:
         self.min_reporting_change = float(os.getenv("COMFOBRIDGE_MIN_REPORTING_CHANGE", 2))
         self.log_level = os.getenv("LOG_LEVEL", "INFO").upper()
 
-
 class Engine:
     def __init__(self, config: Config):
         self.config: Config = config
         self.mqtt = Mqtt(config.mqtt_sensor_topic, config.mqtt_host, config.mqtt_port, config.mqtt_client_id,
                          config.mqtt_user, config.mqtt_password, config.mqtt_retain)
         reporting = Reporting(config.min_reporting_interval, config.max_reporting_interval, config.min_reporting_change)
-        self.ventilation = Ventilation(config.comfoconnect_host, config.comfoconnect_uuid,
-                                       config.comfoconnect_local_uuid, self.mqtt.sensor_publish, reporting)
+        self.ventilation = Ventilation(config.bridge_host,  config.bridge_pin, config.bridge_uid, config.app_uuid ,config.app_id ,self.mqtt.sensor_publish, reporting)
 
     async def __aenter__(self):
         await self.mqtt.__aenter__()
