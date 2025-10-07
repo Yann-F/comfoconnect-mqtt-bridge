@@ -44,13 +44,13 @@ class Ventilation:
         try:
             self.comfoconnect = ComfoConnect(self.bridge_host, self.bridge_uid , sensor_callback=self.filter)
             logger.info("Connecting to ComfoConnect...")
-            await self.comfoconnect.connect(self.local_uuid)
+            await self.comfoconnect.connect(self.app_uuid)
         except ComfoConnectNotAllowed:
             logger.info("....Access denied")
             logger.info("Try to register...")
             await self.register_to_bridge(self)
             logger.info("Connecting to ComfoConnect again ...")
-            await self.comfoconnect.connect(self.local_uuid)
+            await self.comfoconnect.connect(self.app_uuid)
 
     async def register_all_sensors(self):
         for key in aiocomfoconnect.sensors.SENSORS:
