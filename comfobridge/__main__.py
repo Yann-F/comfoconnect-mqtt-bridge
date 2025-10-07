@@ -10,6 +10,8 @@ from comfobridge.mqtt import Mqtt
 from comfobridge.reporting import Reporting
 from comfobridge.ventilation import Ventilation
 
+from dotenv import load_dotenv 
+
 KEEPALIVE_TIMEOUT = datetime.timedelta(seconds=60)
 
 logger = logging.getLogger(__name__)
@@ -17,6 +19,7 @@ logger = logging.getLogger(__name__)
 
 class Config:
     def __init__(self):
+        load_dotenv()
         self.bridge_uid = os.getenv("COMFOCONNECT_BRIDGE_UUID")
         self.bridge_host = os.getenv("COMFOCONNECT_HOST")
         self.bridge_pin = os.getenv("COMFOCONNECT_PIN")
